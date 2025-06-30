@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Página de Jogos e Filmes Inspirada no Letterboxd</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .line-clamp-1 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+      }
+      .line-clamp-2 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-gray-900">
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-gray-900 bg-opacity-95 backdrop-blur-sm border-b border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 011 1v1a1 1 0 01-1 1h-1v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7H3a1 1 0 01-1-1V5a1 1 0 011-1h4zM9 7v10h6V7H9z"/>
+              </svg>
+            </div>
+            <h1 class="text-xl font-bold text-white">Biblioteca do Zitos</h1>
+          </div>
+          
+          <button id="add-media-button" class="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>Adicionar</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Indicador de Carregamento -->
+    <div id="loading-indicator" class="fixed top-0 left-0 w-full h-1 bg-gray-700 z-50">
+      <div id="loading-bar" class="h-full bg-blue-500 transition-all duration-300" style="width: 0%"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-gray-800 rounded-lg p-4 text-center">
+          <div class="text-2xl font-bold text-white">12</div>
+          <div class="text-gray-400 text-sm">Total</div>
+        </div>
+        <div class="bg-gray-800 rounded-lg p-4 text-center">
+          <div class="text-2xl font-bold text-blue-400">8</div>
+          <div class="text-gray-400 text-sm">Filmes</div>
+        </div>
+        <div class="bg-gray-800 rounded-lg p-4 text-center">
+          <div class="text-2xl font-bold text-purple-400">4</div>
+          <div class="text-gray-400 text-sm">Jogos</div>
+        </div>
+        <div class="bg-gray-800 rounded-lg p-4 text-center">
+          <div class="text-2xl font-bold text-green-400">7</div>
+          <div class="text-gray-400 text-sm">Concluídos</div>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="flex flex-col space-y-4 mb-8">
+        <div class="relative">
+          <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Buscar por título, gênero ou descrição..."
+            class="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <button id="filter-all" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-blue-500 text-white shadow-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+            </svg>
+            <span>Todos</span>
+          </button>
+          <button id="filter-movies" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 011 1v1a1 1 0 01-1 1h-1v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7H3a1 1 0 01-1-1V5a1 1 0 011-1h4zM9 7v10h6V7H9z"/>
+            </svg>
+            <span>Filmes</span>
+          </button>
+          <button id="filter-games" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10V9a2 2 0 012-2h2a2 2 0 012 2v1M9 10v5a2 2 0 002 2h2a2 2 0 002-2v-5"/>
+            </svg>
+            <span>Jogos</span>
+          </button>
+          <button id="filter-watchlist" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>Para Assistir/Jogar</span>
+          </button>
+          <button id="filter-watching" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10V9a2 2 0 012-2h2a2 2 0 012 2v1M9 10v5a2 2 0 002 2h2a2 2 0 002-2v-5"/>
+            </svg>
+            <span>Assistindo/Jogando</span>
+          </button>
+          <button id="filter-completed" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>Assistidos/Jogados</span>
+          </button>
+          <button id="filter-favorites" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+            <span>Favoritos</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Media Grid -->
+      <div id="media-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Sample Movie Card -->
+        <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group">
+          <div class="relative">
+            <div class="w-full h-48 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+              <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 011 1v1a1 1 0 01-1 1h-1v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7H3a1 1 0 01-1-1V5a1 1 0 011-1h4zM9 7v10h6V7H9z"/>
+              </svg>
+            </div>
+            
+            <div class="absolute top-3 right-3">
+              <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-500 text-white">Filme</span>
+            </div>
+
+            <div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div class="flex space-x-2">
+                <button class="p-1.5 bg-gray-900 bg-opacity-80 rounded-full hover:bg-opacity-90 transition-all duration-200 favorite-button">
+                  <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                </button>
+                <button class="p-1.5 bg-gray-900 bg-opacity-80 rounded-full hover:bg-opacity-90 transition-all duration-200 edit-button">
+                  <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                </button>
+                <button class="p-1.5 bg-red-900 bg-opacity-80 rounded-full hover:bg-opacity-90 transition-all duration-200 delete-button">
+                  <svg class="w-4 h-4 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-4">
+            <h3 class="text-lg font-semibold text-white mb-2 line-clamp-1">Inception</h3>
+            
+            <div class="flex items-center text-gray-400 text-sm mb-3">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              2010
+            </div>
+
+            <p class="text-gray-400 text-sm mb-3">Ficção Científica</p>
+
+            <p class="text-gray-300 text-sm mb-4 line-clamp-2">
+              Um ladrão que rouba segredos corporativos através do uso da tecnologia de compartilhamento de sonhos.
+            </p>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-gray-600">
+                Para Assistir
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-gray-600">
+                Assistindo
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-green-500 text-white shadow-lg">
+                Assistido
+              </button>
+            </div>
+            
+            <div class="pt-3 border-t border-gray-700">
+              <p class="text-gray-400 text-xs mb-2">Minha avaliação:</p>
+              <div class="flex space-x-1">
+                <span class="text-yellow-400">★</span>
+                <span class="text-yellow-400">★</span>
+                <span class="text-yellow-400">★</span>
+                <span class="text-yellow-400">★</span>
+                <span class="text-yellow-400">★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Game Card -->
+        <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group">
+          <div class="relative">
+            <div class="w-full h-48 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+              <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10V9a2 2 0 012-2h2a2 2 0 012 2v1M9 10v5a2 2 0 002 2h2a2 2 0 002-2v-5"/>
+              </svg>
+            </div>
+            
+            <div class="absolute top-3 right-3">
+              <span class="px-2 py-1 rounded-full text-xs font-medium bg-purple-500 text-white">Jogo</span>
+            </div>
+
+            <div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div class="flex space-x-2">
+                <button class="p-1.5 bg-gray-900 bg-opacity-80 rounded-full hover:bg-opacity-90 transition-all duration-200 edit-button">
+                  <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                </button>
+                <button class="p-1.5 bg-red-900 bg-opacity-80 rounded-full hover:bg-opacity-90 transition-all duration-200 delete-button">
+                  <svg class="w-4 h-4 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-4">
+            <h3 class="text-lg font-semibold text-white mb-2 line-clamp-1">The Witcher 3</h3>
+            
+            <div class="flex items-center text-gray-400 text-sm mb-3">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              2015
+            </div>
+
+            <p class="text-gray-400 text-sm mb-3">RPG</p>
+
+            <p class="text-gray-300 text-sm mb-4 line-clamp-2">
+              Um RPG de mundo aberto onde você joga como Geralt de Rivia, um caçador de monstros.
+            </p>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-gray-600">
+                Para Jogar
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-blue-500 text-white shadow-lg">
+                Jogando
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-gray-600">
+                Jogado
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Movie Card 2 -->
+        <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group">
+          <div class="relative">
+            <div class="w-full h-48 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+              <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 011 1v1a1 1 0 01-1 1h-1v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7H3a1 1 0 01-1-1V5a1 1 0 011-1h4zM9 7v10h6V7H9z"/>
+              </svg>
+            </div>
+            
+            <div class="absolute top-3 right-3">
+              <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-500 text-white">Filme</span>
+            </div>
+
+            <div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div class="flex space-x-2">
+                <button class="p-1.5 bg-gray-900 bg-opacity-80 rounded-full hover:bg-opacity-90 transition-all duration-200 edit-button">
+                  <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                </button>
+                <button class="p-1.5 bg-red-900 bg-opacity-80 rounded-full hover:bg-opacity-90 transition-all duration-200 delete-button">
+                  <svg class="w-4 h-4 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-4">
+            <h3 class="text-lg font-semibold text-white mb-2 line-clamp-1">Interstellar</h3>
+            
+            <div class="flex items-center text-gray-400 text-sm mb-3">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              2014
+            </div>
+
+            <p class="text-gray-400 text-sm mb-3">Drama, Ficção Científica</p>
+
+            <p class="text-gray-300 text-sm mb-4 line-clamp-2">
+              Uma equipe de exploradores viaja através de um buraco de minhoca no espaço na tentativa de garantir a sobrevivência da humanidade.
+            </p>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-orange-500 text-white shadow-lg">
+                Para Assistir
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-gray-600">
+                Assistindo
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-gray-600">
+                Assistido
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Game Card 2 -->
+        <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group">
+          <div class="relative">
+            <div class="w-full h-48 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+              <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10V9a2 2 0 012-2h2a2 2 0 012 2v1M9 10v5a2 2 0 002 2h2a2 2 0 002-2v-5"/>
+              </svg>
+            </div>
+            
+            <div class="absolute top-3 right-3">
+              <span class="px-2 py-1 rounded-full text-xs font-medium bg-purple-500 text-white">Jogo</span>
+            </div>
+
+            <div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div class="flex space-x-2">
+                <button class="p-1.5 bg-gray-900 bg-opacity-80 rounded-full hover:bg-opacity-90 transition-all duration-200 edit-button">
+                  <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                </button>
+                <button class="p-1.5 bg-red-900 bg-opacity-80 rounded-full hover:bg-opacity-90 transition-all duration-200 delete-button">
+                  <svg class="w-4 h-4 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-4">
+            <h3 class="text-lg font-semibold text-white mb-2 line-clamp-1">Cyberpunk 2077</h3>
+            
+            <div class="flex items-center text-gray-400 text-sm mb-3">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              2020
+            </div>
+
+            <p class="text-gray-400 text-sm mb-3">RPG, Ação</p>
+
+            <p class="text-gray-300 text-sm mb-4 line-clamp-2">
+              Um RPG de ação em mundo aberto ambientado na megalópole de Night City, onde você joga como um mercenário cyberpunk.
+            </p>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-gray-600">
+                Para Jogar
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-gray-600">
+                Jogando
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-green-500 text-white shadow-lg">
+                Jogado
+              </button>
+            </div>
+            
+            <div class="pt-3 border-t border-gray-700">
+              <p class="text-gray-400 text-xs mb-2">Minha avaliação:</p>
+              <div class="flex space-x-1">
+                <span class="text-yellow-400">★</span>
+                <span class="text-yellow-400">★</span>
+                <span class="text-yellow-400">★</span>
+                <span class="text-yellow-400">★</span>
+                <span class="text-gray-600">★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal para Adicionar Mídia -->
+    <div id="add-media-modal" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden">
+      <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-semibold text-white">Adicionar à Biblioteca</h3>
+          <button id="close-modal-button" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <form id="add-media-form" class="space-y-6">
+          <input type="hidden" id="media-image-url" name="imageUrl">
+          
+          <!-- Tipo de Mídia -->
+          <div>
+            <label for="media-type" class="block text-sm font-medium text-gray-300 mb-1">Tipo</label>
+            <select id="media-type" name="type" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="movie">Filme</option>
+              <option value="game">Jogo</option>
+            </select>
+          </div>
+
+          <!-- Busca Rápida (Opcional) -->
+          <div>
+            <label for="media-search-input" class="block text-sm font-medium text-gray-300 mb-1">Busca Rápida (Preenche o formulário)</label>
+            <div class="relative">
+              <input type="text" id="media-search-input" autocomplete="off" class="w-full bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Digite um nome para buscar...">
+              <div id="media-search-results" class="absolute z-20 w-full bg-gray-600 rounded-b-lg mt-1 max-h-60 overflow-y-auto hidden shadow-lg">
+                <!-- Resultados da busca serão populados aqui -->
+              </div>
+            </div>
+          </div>
+
+          <hr class="border-gray-700"/>
+
+          <div>
+            <label for="media-title" class="block text-sm font-medium text-gray-300 mb-1">Título</label>
+            <input type="text" id="media-title" name="title" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Inception">
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="media-year" class="block text-sm font-medium text-gray-300 mb-1">Data de Lançamento</label>
+              <input
+                type="text"
+                id="media-year"
+                name="year"
+                placeholder="Ano"
+                maxlength="10"
+                class="w-full bg-gray-900 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              />
+            </div>
+            <div>
+              <label for="media-genre" class="block text-sm font-medium text-gray-300 mb-1">Gênero</label>
+              <input type="text" id="media-genre" name="genre" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Ficção Científica, Ação">
+            </div>
+          </div>
+          <div>
+            <label for="user-opinion" class="block text-sm font-medium text-gray-300 mb-1">Minha Opinião</label>
+            <textarea id="user-opinion" name="userOpinion" rows="3" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="O que você achou deste item?"></textarea>
+            <input type="hidden" id="media-description" name="description">
+          </div>
+          <div>
+            <label for="media-status" class="block text-sm font-medium text-gray-300 mb-1">Status</label>
+            <select id="media-status" name="status" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="watchlist">Para assistir/jogar</option>
+              <option value="watching">Assistindo/jogando</option>
+              <option value="completed">Assistidos/jogados</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Minha Avaliação</label>
+            <div id="modal-rating-stars" class="flex space-x-1 text-2xl text-gray-500 cursor-pointer">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <input type="hidden" id="media-rating" name="rating" value="0">
+          </div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button type="button" id="cancel-button" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-white font-medium">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-medium">Adicionar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal para Visualizar Detalhes da Mídia -->
+    <div id="view-media-modal" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden">
+      <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-semibold text-white">Detalhes da Mídia</h3>
+          <button id="close-view-modal-button" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <div id="media-details-content" class="space-y-6">
+          <!-- Conteúdo será preenchido dinamicamente -->
+        </div>
+        <div class="mt-6 flex justify-end">
+          <button id="close-view-modal-button-2" class="px-6 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-white font-medium">Fechar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div id="delete-confirmation-modal" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden">
+      <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+        <div class="flex items-center mb-4">
+          <div class="flex-shrink-0 w-12 h-12 bg-red-100 bg-opacity-10 rounded-full flex items-center justify-center mr-4">
+            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-white">Confirmar Exclusão</h3>
+            <p class="text-gray-400 text-sm">Esta ação não pode ser desfeita</p>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <p class="text-gray-300">
+            Tem certeza que deseja excluir <span id="delete-item-title" class="font-semibold text-white"></span>?
+          </p>
+          <p class="text-gray-400 text-sm mt-2">
+            Este item será removido permanentemente da sua biblioteca.
+          </p>
+        </div>
+        
+        <div class="flex justify-end space-x-3">
+          <button id="cancel-delete-button" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-white font-medium transition-colors duration-200">
+            Cancelar
+          </button>
+          <button id="confirm-delete-button" class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg text-white font-medium transition-colors duration-200">
+            Excluir
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src=".bolt/config.js"></script>
+    <script src=".bolt/app.js" defer></script>
+  </body>
+</html>
