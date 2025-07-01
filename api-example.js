@@ -1,6 +1,8 @@
 // API com banco de dados SQLite
 // Execute com: node api-example.js
 
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
@@ -93,7 +95,7 @@ async function initializeDatabase() {
 // Middleware de autenticação
 function authenticateAPI(req, res, next) {
   const apiKey = req.headers['x-api-key'] || req.headers.authorization?.replace('Bearer ', '');
-  const expectedKey = 'e476cca32fa8443da410678adfbff88e';
+  const expectedKey = process.env.API_KEY;
   
   if (apiKey !== expectedKey) {
     return res.status(401).json({ error: 'Chave da API inválida' });
@@ -333,6 +335,19 @@ apiRouter.get('/test', (req, res) => {
   });
 });
 
+// Rota para expor configurações da API para o frontend
+app.get('/api/config', (req, res) => {
+  res.json({
+    API_KEY: process.env.API_KEY,
+    TMDB_API_KEY: process.env.TMDB_API_KEY,
+    RAWG_API_KEY: process.env.RAWG_API_KEY,
+    YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
+    API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3000/api',
+    TIMEOUT: process.env.TIMEOUT ? parseInt(process.env.TIMEOUT) : 10000,
+    MAX_RETRIES: process.env.MAX_RETRIES ? parseInt(process.env.MAX_RETRIES) : 3
+  });
+});
+
 // Usar o router para todas as rotas da API sob o prefixo /api
 app.use('/api', apiRouter);
 
@@ -350,7 +365,7 @@ initializeDatabase()
       console.log(`   GET  /api/stats - Estatísticas`);
       console.log(`   GET  /api/search?q=termo - Buscar itens`);
       console.log(`   GET  /api/test - Teste da API`);
-      console.log(`🔑 Chave da API: e476cca32fa8443da410678adfbff88e`);
+      console.log(`🔑 Chave da API: ${process.env.API_KEY}`);
     });
   })
   .catch(err => {

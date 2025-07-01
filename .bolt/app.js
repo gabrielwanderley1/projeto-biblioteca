@@ -1,4 +1,50 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Carregar configurações da API do servidor
+  let API_CONFIG;
+  try {
+    const response = await fetch('/api/config');
+    if (response.ok) {
+      const config = await response.json();
+      API_CONFIG = {
+        ...config,
+        ENDPOINTS: {
+          MEDIA_ITEMS: '/media-items',
+          MEDIA_ITEM: (id) => `/media-items/${id}`,
+          SEARCH: '/search',
+          STATS: '/stats'
+        },
+        DEFAULT_HEADERS: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      };
+    } else {
+      throw new Error('Falha ao carregar configurações da API');
+    }
+  } catch (error) {
+    console.error('Erro ao carregar configurações da API:', error);
+    // Fallback para configurações padrão
+    API_CONFIG = {
+      API_KEY: 'e476cca32fa8443da410678adfbff88e',
+      TMDB_API_KEY: 'fd8bf0bc323c658526632584143ae68c',
+      RAWG_API_KEY: 'e476cca32fa8443da410678adfbff88e',
+      YOUTUBE_API_KEY: 'AIzaSyCuMkHt34DH7mvzKRKuqGcBqlg4ctYLqwI',
+      API_BASE_URL: 'http://localhost:3000/api',
+      TIMEOUT: 10000,
+      MAX_RETRIES: 3,
+      ENDPOINTS: {
+        MEDIA_ITEMS: '/media-items',
+        MEDIA_ITEM: (id) => `/media-items/${id}`,
+        SEARCH: '/search',
+        STATS: '/stats'
+      },
+      DEFAULT_HEADERS: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    };
+  }
+
   const addMediaButton = document.getElementById('add-media-button');
   const addMediaModal = document.getElementById('add-media-modal');
   const closeModalButton = document.getElementById('close-modal-button');
