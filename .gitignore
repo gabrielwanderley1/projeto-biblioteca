@@ -1,0 +1,4 @@
+# Ignorar dependências, variáveis de ambiente e banco de dados
+node_modules/
+.env
+database/ 

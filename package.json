@@ -1,0 +1,35 @@
+{
+  "name": "biblioteca-media-api",
+  "version": "1.0.0",
+  "description": "API de exemplo para a Biblioteca de Mídia com banco de dados SQLite",
+  "main": "src/server/index.js",
+  "scripts": {
+    "start": "node src/server/index.js",
+    "dev": "nodemon src/server/index.js",
+    "init-db": "node -e \"require('./src/server/index.js')\""
+  },
+  "keywords": [
+    "api",
+    "biblioteca",
+    "media",
+    "filmes",
+    "jogos",
+    "sqlite",
+    "database"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
