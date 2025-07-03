@@ -54,10 +54,10 @@ Write-Host ""
 Write-Host "📋 Verificando arquivos do projeto..." -ForegroundColor Yellow
 
 $requiredFiles = @(
-    "index.html",
-    ".bolt/app.js",
-    ".bolt/config.js",
-    "api-example.js"
+    "public/index.html",
+    "public/bolt/app.js",
+    "public/bolt/config.js",
+    "src/server/index.js"
 )
 
 $missingFiles = @()
@@ -102,8 +102,8 @@ Write-Host "🎉 Configuração concluída!" -ForegroundColor Green
 Write-Host ""
 Write-Host "📝 Próximos passos:" -ForegroundColor Cyan
 Write-Host "1. Execute: npm start" -ForegroundColor White
-Write-Host "2. Abra index.html em um servidor web" -ForegroundColor White
-Write-Host "3. Ou use Live Server no VS Code" -ForegroundColor White
+Write-Host "2. Abra http://localhost:3000 no navegador" -ForegroundColor White
+Write-Host "3. Ou use Live Server no VS Code para desenvolvimento" -ForegroundColor White
 Write-Host ""
 Write-Host "🔗 URLs importantes:" -ForegroundColor Cyan
 Write-Host "• Aplicação: http://localhost:3000 (após iniciar o servidor)" -ForegroundColor White
@@ -114,7 +114,8 @@ Write-Host "🔑 Chave da API: e476cca32fa8443da410678adfbff88e" -ForegroundColo
 Write-Host ""
 Write-Host "📚 Documentação:" -ForegroundColor Cyan
 Write-Host "• README.md - Guia principal" -ForegroundColor White
-Write-Host "• DATABASE.md - Documentação do banco de dados" -ForegroundColor White
+Write-Host "• docs/DATABASE.md - Documentação do banco de dados" -ForegroundColor White
+Write-Host "• docs/YOUTUBE_SETUP.md - Configuração do YouTube" -ForegroundColor White
 Write-Host ""
 
 # Perguntar se quer iniciar o servidor

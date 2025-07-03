@@ -69,15 +69,6 @@ function authenticateAPI(req, res, next) {
   next();
 }
 
-// Usar rotas separadas
-app.use('/api', createApiRouter(db, authenticateAPI));
-app.use('/', createImageProxyRouter());
-
-// Rota principal - servir o index.html
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../public/index.html'));
-});
-
 // Rota para expor configurações da API para o frontend (SEM autenticação)
 app.get('/api/config', (req, res) => {
   res.json({
@@ -89,6 +80,15 @@ app.get('/api/config', (req, res) => {
     TIMEOUT: process.env.TIMEOUT ? parseInt(process.env.TIMEOUT) : 10000,
     MAX_RETRIES: process.env.MAX_RETRIES ? parseInt(process.env.MAX_RETRIES) : 3
   });
+});
+
+// Usar rotas separadas
+app.use('/api', createApiRouter(db, authenticateAPI));
+app.use('/', createImageProxyRouter());
+
+// Rota principal - servir o index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
 
 // Iniciar servidor

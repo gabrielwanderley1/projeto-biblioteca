@@ -8,7 +8,8 @@ const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const axios = require('axios');
-const API_CONFIG = require('./.bolt/config.js'); // Importar a configuração
+// Configuração da API (exemplo - não usado neste arquivo)
+// const API_CONFIG = require('../public/bolt/config.js');
 
 const app = express();
 const PORT = 3000;

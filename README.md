@@ -57,22 +57,38 @@ O banco de dados será criado automaticamente na primeira execução.
 
 ### 3. Configurar a URL da API
 
-A URL já está configurada para `http://localhost:3000` no arquivo `.bolt/config.js`.
+A URL já está configurada para `http://localhost:3000` no arquivo `public/bolt/config.js`.
 
 ## 📁 Estrutura do Projeto
 
 ```
-project/
-├── index.html              # Página principal
-├── .bolt/
-│   ├── app.js             # Lógica principal da aplicação
-│   └── config.js          # Configurações da API
-├── api-example.js         # Servidor API com SQLite
-├── package.json           # Dependências do projeto
-├── media_library.db       # Banco de dados SQLite (criado automaticamente)
-├── DATABASE.md            # Documentação do banco de dados
-├── README.md              # Este arquivo
-└── update_cards.ps1       # Script PowerShell (se aplicável)
+Projeto Pessoal/
+├── 📁 docs/               # Documentação
+│   ├── DATABASE.md        # Documentação do banco de dados
+│   ├── LAYOUT_FEATURES.md # Recursos do layout
+│   └── YOUTUBE_SETUP.md   # Configuração do YouTube
+├── 📁 scripts/            # Scripts PowerShell
+│   ├── setup.ps1          # Script de configuração
+│   └── update_cards.ps1   # Script de atualização
+├── 📁 examples/           # Exemplos de código
+│   └── api-example.js     # Exemplo de API
+├── 📁 src/server/         # Backend Express
+│   ├── index.js           # Servidor principal
+│   ├── api.js             # Rotas da API
+│   └── image-proxy.js     # Proxy de imagens
+├── 📁 public/             # Frontend
+│   ├── bolt/              # Aplicação principal
+│   │   ├── app.js         # Lógica da aplicação
+│   │   ├── config.js      # Configurações
+│   │   ├── config.json    # Configurações JSON
+│   │   ├── placeholder.png # Imagem placeholder
+│   │   └── prompt         # Arquivo de prompt
+│   └── index.html         # Página principal
+├── 📁 database/           # Banco de dados
+│   └── media_library.db   # Banco SQLite (criado automaticamente)
+├── 📄 package.json        # Dependências do projeto
+├── 📄 README.md           # Este arquivo
+└── 📄 .gitignore          # Arquivos ignorados
 ```
 
 ## 🔄 Funcionamento
@@ -138,7 +154,7 @@ project/
 ### 1. Configurar o Projeto
 ```bash
 # Clonar ou baixar o projeto
-cd project
+# (não é necessário cd para pasta específica)
 
 # Instalar dependências
 npm install
@@ -230,6 +246,6 @@ Para contribuir com o projeto:
 
 ## 📚 Documentação Adicional
 
-- [DATABASE.md](./DATABASE.md) - Documentação detalhada do banco de dados
-- [api-example.js](./api-example.js) - Código do servidor API
-- [.bolt/config.js](./.bolt/config.js) - Configurações da aplicação 
+- [docs/DATABASE.md](./docs/DATABASE.md) - Documentação detalhada do banco de dados
+- [examples/api-example.js](./examples/api-example.js) - Exemplo de código do servidor API
+- [public/bolt/config.js](./public/bolt/config.js) - Configurações da aplicação 

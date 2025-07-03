@@ -23,7 +23,7 @@ Para que a funcionalidade de trailers funcione, você precisa obter uma chave da
 - Sua chave será gerada automaticamente
 
 ### 5. Configure a chave no projeto
-- Abra o arquivo `project/.bolt/config.js`
+- Abra o arquivo `public/bolt/config.js`
 - Substitua `'SUA_CHAVE_YOUTUBE_AQUI'` pela sua chave real:
 
 ```javascript
